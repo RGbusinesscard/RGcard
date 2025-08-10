@@ -4,120 +4,334 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Commander — RG.card</title>
+  <meta name="description" content="Commandez vos cartes NFC et plaques comptoir RG.card. Personnalisation avec logo, calcul automatique du total." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg:#0b0d10;
       --panel:#0f1318cc;
       --text:#e8edf2;
       --muted:#a7b1bd;
+      --accent:#93c5fd;
+      --brand:#ffffff;
       --cta:#0ea5e9;
-      --radius:18px;
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-      --maxw: 900px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      --maxw: 1100px;
     }
+    *{box-sizing:border-box}
     body{
       margin:0;
-      font-family:Inter,system-ui,sans-serif;
-      background:var(--bg);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
       color:var(--text);
-      line-height:1.5;
+      background: radial-gradient(1200px 800px at 10% -10%, #1b2330 0%, transparent 60%),
+                  radial-gradient(1000px 700px at 110% 10%, #0d3b66 0%, transparent 60%),
+                  linear-gradient(180deg,#0b0d10 0%, #0b0d10 100%);
+      line-height:1.55;
     }
     a{color:inherit;text-decoration:none}
-    .container{max-width:var(--maxw);margin:auto;padding:20px}
-    h1{font-size:clamp(24px,5vw,36px);margin-bottom:10px}
-    .panel{
-      background:var(--panel);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:20px;
-      margin-bottom:20px;
-      border:1px solid rgba(255,255,255,.08);
+    .container{max-width:var(--maxw);margin-inline:auto;padding:20px}
+    .grid{display:grid;gap:20px}
+    @media(min-width:980px){ .grid{grid-template-columns:1.2fr .8fr} }
+
+    /* header mini */
+    .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#2b3340, #11161d);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;box-shadow:var(--shadow)}
+    .logo span{font-size:14px;letter-spacing:.5px;color:var(--brand)}
+    .ghost{padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.12);transition:.2s}
+    .ghost:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.22)}
+    .cta{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;font-weight:700;background:linear-gradient(180deg,var(--cta),#0c8ecf);color:#031018;border:0;cursor:pointer;box-shadow:0 6px 18px rgba(14,165,233,.35)}
+
+    .panel{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+    h1{font-size:clamp(24px,4.6vw,40px);margin:8px 0 4px}
+    h2{margin:0 0 10px}
+    .muted{color:var(--muted)}
+    label{display:block;font-weight:600;margin:12px 0 6px}
+    input[type="text"],input[type="email"],input[type="tel"],input[type="url"],input[type="number"],select,textarea{
+      width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:#0c1117;color:var(--text)
     }
-    label{display:block;margin:12px 0 6px;font-weight:600}
-    select, input[type="text"], input[type="email"], input[type="file"]{
-      width:100%;
-      padding:10px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.1);
-      background:#151a20;
-      color:var(--text);
-    }
-    .total{
-      font-size:1.4rem;
-      font-weight:700;
-      margin-top:10px;
-    }
-    button{
-      background:linear-gradient(180deg,var(--cta),#0c8ecf);
-      border:none;
-      padding:14px 20px;
-      border-radius:999px;
-      color:#031018;
-      font-weight:700;
-      cursor:pointer;
-      box-shadow:0 6px 18px rgba(14,165,233,.35);
-      width:100%;
-      font-size:1rem;
-    }
-    button:hover{filter:brightness(1.1)}
+    textarea{min-height:110px;resize:vertical}
+    .row{display:grid;gap:12px}
+    @media(min-width:720px){ .row{grid-template-columns:1fr 1fr} }
+
+    /* item produit */
+    .item{display:grid;gap:12px;margin:10px 0 18px}
+    .itemHead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .qty{display:flex;align-items:center;gap:8px}
+    .qty input{width:110px}
+
+    /* custom file */
+    .file-wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .file-input{position:relative;display:inline-block}
+    .file-input input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer}
+    .file-btn{padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04)}
+    .file-name{font-size:12px;color:#cfe1ff}
+
+    /* recap */
+    .total{font-size:32px;font-weight:800}
+    .line{display:flex;align-items:center;justify-content:space-between;margin:8px 0}
+    .small{font-size:12px}
+    .ok{color:#b7ffca}
+
+    /* helper */
+    .hint{font-size:12px;color:#93a6bb}
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Commander votre produit NFC</h1>
-    <p class="muted">Complétez les étapes ci-dessous pour passer commande.</p>
-
-    <div class="panel">
-      <label for="produit">Choisissez votre produit</label>
-      <select id="produit">
-        <option value="20">Carte NFC — 20 €</option>
-        <option value="35">Plaque NFC — 35 €</option>
-      </select>
-
-      <label for="gravure">Personnalisation gravure/logo (+10 €)</label>
-      <input type="file" id="gravure">
-
-      <div class="total">Total : <span id="total">20</span> €</div>
+    <!-- mini header -->
+    <div class="bar">
+      <div class="brand">
+        <div class="logo"><span>RG</span></div>
+        <span>RG.card</span>
+      </div>
+      <a class="ghost" href="index.html">← Retour au site</a>
     </div>
 
-    <div class="panel">
-      <label for="nom">Nom complet</label>
-      <input type="text" id="nom" placeholder="Votre nom" required>
+    <h1>Commander</h1>
+    <p class="muted">Carte <strong>20 €</strong> · Plaque comptoir <strong>35 €</strong> — <em>+10 € / unité</em> si personnalisation/logo. TVA non applicable — art. 293 B du CGI.</p>
 
-      <label for="email">E-mail</label>
-      <input type="email" id="email" placeholder="votremail@example.com" required>
+    <div class="grid">
+      <!-- FORMULAIRE -->
+      <form class="panel" id="orderForm" onsubmit="handleSubmit(event)">
+        <h2>Produits</h2>
 
-      <label for="adresse">Adresse</label>
-      <input type="text" id="adresse" placeholder="Adresse de livraison" required>
+        <!-- Carte -->
+        <div class="item" id="cardBlock">
+          <div class="itemHead">
+            <div>
+              <strong>Carte NFC</strong>
+              <div class="muted small">Prix unitaire : 20 €</div>
+            </div>
+            <div class="qty">
+              <label for="qtyCard" class="muted">Quantité</label>
+              <input id="qtyCard" type="number" min="0" value="1" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="finishCard">Finition</label>
+              <select id="finishCard">
+                <option value="mate">Mate</option>
+                <option value="brillante">Brillante</option>
+              </select>
+            </div>
+            <div>
+              <label for="colorCard">Couleur dominante</label>
+              <select id="colorCard">
+                <option>Noir</option>
+                <option>Anthracite</option>
+                <option>Blanc</option>
+                <option>Personnalisée</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="muted">Lien à programmer (site, Instagram, Google, vCard…)</label>
+          <input id="linkCard" type="url" placeholder="https://…" />
+
+          <label>Personnalisation / logo (+10 € / unité)</label>
+          <div class="file-wrap">
+            <label class="file-input">
+              <span class="file-btn">Ajouter un logo</span>
+              <input id="fileCard" type="file" accept=".svg,.png,.pdf,.ai,.eps,.jpg,.jpeg" />
+            </label>
+            <span id="fileNameCard" class="file-name"></span>
+            <label class="ghost" style="display:inline-flex;align-items:center;gap:8px">
+              <input id="engraveCard" type="checkbox" style="accent-color:#0ea5e9"> Je veux une gravure / texte
+            </label>
+          </div>
+          <div class="hint">Vectoriel recommandé (SVG/PDF) pour une gravure nette.</div>
+        </div>
+
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,.12);margin:8px 0 16px">
+
+        <!-- Plaque -->
+        <div class="item" id="plaqueBlock">
+          <div class="itemHead">
+            <div>
+              <strong>Plaque comptoir NFC</strong>
+              <div class="muted small">Prix unitaire : 35 €</div>
+            </div>
+            <div class="qty">
+              <label for="qtyPlaque" class="muted">Quantité</label>
+              <input id="qtyPlaque" type="number" min="0" value="0" />
+            </div>
+          </div>
+
+          <label class="muted">Réseau ou lien (Google, Instagram, Snapchat, TripAdvisor…)</label>
+          <input id="linkPlaque" type="url" placeholder="https://…" />
+
+          <label>Personnalisation / logo (+10 € / unité)</label>
+          <div class="file-wrap">
+            <label class="file-input">
+              <span class="file-btn">Ajouter un logo</span>
+              <input id="filePlaque" type="file" accept=".svg,.png,.pdf,.ai,.eps,.jpg,.jpeg" />
+            </label>
+            <span id="fileNamePlaque" class="file-name"></span>
+            <label class="ghost" style="display:inline-flex;align-items:center;gap:8px">
+              <input id="engravePlaque" type="checkbox" style="accent-color:#0ea5e9"> Je veux une gravure / texte
+            </label>
+          </div>
+        </div>
+
+        <h2>Vos coordonnées</h2>
+        <div class="row">
+          <div>
+            <label for="name">Nom complet</label>
+            <input id="name" type="text" required>
+          </div>
+          <div>
+            <label for="email">E‑mail</label>
+            <input id="email" type="email" required>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="phone">Téléphone</label>
+            <input id="phone" type="tel" required>
+          </div>
+          <div>
+            <label for="company">Entreprise (facultatif)</label>
+            <input id="company" type="text">
+          </div>
+        </div>
+
+        <label for="notes">Notes pour la mise en page</label>
+        <textarea id="notes" placeholder="Instructions de design, police souhaitée, contraintes, etc."></textarea>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+          <button class="cta" type="submit">Envoyer la commande</button>
+          <a id="mailtoLink" class="ghost" href="#">Envoyer par e‑mail</a>
+        </div>
+      </form>
+
+      <!-- RÉCAP -->
+      <aside class="panel">
+        <h2 style="margin-top:0">Récapitulatif</h2>
+        <div class="line"><span>Cartes (20 €)</span><strong id="sumCard">0 €</strong></div>
+        <div class="line small muted"><span>+ personnalisations cartes</span><span id="sumCardPerso">0 €</span></div>
+
+        <div class="line" style="margin-top:10px"><span>Plaques (35 €)</span><strong id="sumPlaque">0 €</strong></div>
+        <div class="line small muted"><span>+ personnalisations plaques</span><span id="sumPlaquePerso">0 €</span></div>
+
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,.12);margin:14px 0">
+        <div class="line"><span class="muted">TVA</span><span class="muted">Non applicable</span></div>
+        <div class="line"><span class="muted">Micro‑entreprise</span><span class="ok">art. 293 B</span></div>
+        <div class="line" style="margin-top:6px"><span class="total">Total</span><span class="total" id="grandTotal">0 €</span></div>
+
+        <div class="hint" style="margin-top:10px">Le total ajoute automatiquement <strong>+10 € / unité</strong> si vous cochez la personnalisation ou ajoutez un fichier logo.</div>
+      </aside>
     </div>
 
-    <div class="panel">
-      <button id="payer">Payer maintenant</button>
-    </div>
+    <p class="small muted" style="margin-top:16px">Besoin d’aide ? <a class="ghost" href="mailto:rg.businesscard@gmail.com">Contactez-nous</a></p>
   </div>
 
   <script>
-    const produit = document.getElementById('produit');
-    const gravure = document.getElementById('gravure');
-    const totalEl = document.getElementById('total');
+    // Prix
+    const PRICE_CARD = 20;
+    const PRICE_PLAQUE = 35;
+    const SURCHARGE = 10; // +10 € / unité si personnalisation (case OU fichier)
 
-    function updateTotal(){
-      let prix = parseInt(produit.value);
-      if(gravure.files.length > 0){ prix += 10; }
-      totalEl.textContent = prix;
+    // Éléments
+    const qtyCard = document.getElementById('qtyCard');
+    const qtyPlaque = document.getElementById('qtyPlaque');
+
+    const engraveCard = document.getElementById('engraveCard');
+    const engravePlaque = document.getElementById('engravePlaque');
+
+    const fileCard = document.getElementById('fileCard');
+    const filePlaque = document.getElementById('filePlaque');
+
+    const fileNameCard = document.getElementById('fileNameCard');
+    const fileNamePlaque = document.getElementById('fileNamePlaque');
+
+    const sumCard = document.getElementById('sumCard');
+    const sumCardPerso = document.getElementById('sumCardPerso');
+    const sumPlaque = document.getElementById('sumPlaque');
+    const sumPlaquePerso = document.getElementById('sumPlaquePerso');
+    const grandTotal = document.getElementById('grandTotal');
+
+    const mailtoLink = document.getElementById('mailtoLink');
+    const form = document.getElementById('orderForm');
+
+    function fmtEUR(n){
+      return new Intl.NumberFormat('fr-FR',{ style:'currency', currency:'EUR', maximumFractionDigits:0 }).format(n);
     }
 
-    produit.addEventListener('change', updateTotal);
-    gravure.addEventListener('change', updateTotal);
+    function hasPersonalizationCard(){
+      return engraveCard.checked || (fileCard.files && fileCard.files.length>0);
+    }
+    function hasPersonalizationPlaque(){
+      return engravePlaque.checked || (filePlaque.files && filePlaque.files.length>0);
+    }
 
-    document.getElementById('payer').addEventListener('click', ()=>{
-      alert("Ici on branchera SumUp / Apple Pay pour le paiement.");
-    });
+    function updateFileNames(){
+      fileNameCard.textContent = fileCard.files?.[0]?.name ? 'Fichier : ' + fileCard.files[0].name : '';
+      fileNamePlaque.textContent = filePlaque.files?.[0]?.name ? 'Fichier : ' + filePlaque.files[0].name : '';
+    }
 
-    updateTotal();
+    function updateTotals(){
+      const qCard = Math.max(0, parseInt(qtyCard.value || '0', 10));
+      const qPlaque = Math.max(0, parseInt(qtyPlaque.value || '0', 10));
+
+      const baseCard = qCard * PRICE_CARD;
+      const basePlaque = qPlaque * PRICE_PLAQUE;
+
+      const persoCard = hasPersonalizationCard() ? qCard * SURCHARGE : 0;
+      const persoPlaque = hasPersonalizationPlaque() ? qPlaque * SURCHARGE : 0;
+
+      const total = baseCard + basePlaque + persoCard + persoPlaque;
+
+      sumCard.textContent = fmtEUR(baseCard);
+      sumCardPerso.textContent = fmtEUR(persoCard);
+      sumPlaque.textContent = fmtEUR(basePlaque);
+      sumPlaquePerso.textContent = fmtEUR(persoPlaque);
+      grandTotal.textContent = fmtEUR(total);
+
+      buildMailto(total);
+    }
+
+    function buildMailto(total){
+      const lines = [
+        'Nouvelle commande RG.card',
+        '',
+        `Cartes: quantité ${qtyCard.value} ${hasPersonalizationCard() ? '(+10 € / unité - perso)' : ''}`,
+        `Plaques: quantité ${qtyPlaque.value} ${hasPersonalizationPlaque() ? '(+10 € / unité - perso)' : ''}`,
+        '',
+        `Lien carte: ${document.getElementById('linkCard').value || '-'}`,
+        `Lien plaque: ${document.getElementById('linkPlaque').value || '-'}`,
+        '',
+        `Nom: ${document.getElementById('name').value || ''}`,
+        `Email: ${document.getElementById('email').value || ''}`,
+        `Téléphone: ${document.getElementById('phone').value || ''}`,
+        `Entreprise: ${document.getElementById('company').value || '-'}`,
+        '',
+        `Notes: ${document.getElementById('notes').value || '-'}`,
+        '',
+        `Total estimé: ${grandTotal.textContent} (TVA non applicable — art. 293 B du CGI)`
+      ];
+      const subject = encodeURIComponent('Commande RG.card');
+      const body = encodeURIComponent(lines.join('\\n'));
+      mailtoLink.href = `mailto:rg.businesscard@gmail.com?subject=${subject}&body=${body}`;
+    }
+
+    function handleSubmit(e){
+      e.preventDefault();
+      updateTotals();
+      alert("Merci ! Votre commande est prête. Cliquez sur « Envoyer par e‑mail » pour nous la transmettre, ou activez le paiement en ligne quand vous serez prêt.");
+    }
+
+    // Events
+    [qtyCard, qtyPlaque, engraveCard, engravePlaque].forEach(el => el.addEventListener('input', updateTotals));
+    [fileCard, filePlaque].forEach(el => el.addEventListener('change', ()=>{ updateFileNames(); updateTotals(); }));
+
+    // init
+    updateFileNames();
+    updateTotals();
   </script>
 </body>
 </html>
