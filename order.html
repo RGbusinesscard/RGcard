@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commander — RG.card</title>
+<style>
+body { font-family: sans-serif; background: #0b0d10; color: white; padding: 20px; }
+.container { max-width: 600px; margin: auto; }
+label { display: block; margin-top: 15px; }
+select, input[type="file"] { width: 100%; padding: 8px; margin-top: 5px; }
+.total { font-size: 1.5em; margin-top: 20px; }
+button { margin-top: 20px; padding: 12px 20px; background: #0ea5e9; border: none; color: white; cursor: pointer; border-radius: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Commander</h1>
+<form id="orderForm">
+  <label>Produit :
+    <select id="product">
+      <option value="20">Carte NFC — 20 €</option>
+      <option value="35">Plaque NFC — 35 €</option>
+    </select>
+  </label>
+
+  <label>Option gravure laser (+10 €)
+    <input type="file" id="logoFile" accept="image/*">
+  </label>
+
+  <div class="total">Total : <span id="totalPrice">20</span> €</div>
+
+  <button type="button" id="payBtn">Payer avec SumUp</button>
+</form>
+</div>
+
+<script>
+const product = document.getElementById('product');
+const logoFile = document.getElementById('logoFile');
+const totalPrice = document.getElementById('totalPrice');
+
+function updateTotal() {
+  let price = parseInt(product.value);
+  if (logoFile.files.length > 0) {
+    price += 10;
+  }
+  totalPrice.textContent = price;
+}
+
+product.addEventListener('change', updateTotal);
+logoFile.addEventListener('change', updateTotal);
+
+// Paiement SumUp — à remplacer par ton vrai lien ou intégration
+document.getElementById('payBtn').addEventListener('click', () => {
+  alert('Ici tu pourras intégrer ton lien SumUp ou Apple Pay');
+});
+</script>
+</body>
+</html>
