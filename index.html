@@ -3,366 +3,237 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RG.card — Carte de visite NFC</title>
-  <meta name="description" content="RG.card : cartes de visite NFC élégantes et durables. Pas d'appli. Pas de stress. Il suffit de passer." />
+  <title>Commander — RG.card</title>
+  <meta name="description" content="Commander vos cartes NFC RG.card : personnalisations, logo, gravure, quantité. Paiement en ligne (intégration Stripe/Apple Pay à prévoir)." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0b0d10;           /* fond très sombre, élégant */
-      --panel:#0f1318cc;      /* panneau verre dépoli */
-      --text:#e8edf2;         /* texte principal */
-      --muted:#a7b1bd;        /* texte secondaire */
-      --accent:#93c5fd;       /* accents discrets */
-      --brand:#ffffff;        /* logo/texte clair */
-      --cta:#0ea5e9;          /* bouton primaire */
-      --ok:#22c55e;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 18px;
-      --maxw: 1100px;
+      --bg:#0b0d10;--panel:#0f1318cc;--text:#e8edf2;--muted:#a7b1bd;--accent:#93c5fd;--cta:#0ea5e9;--shadow:0 10px 30px rgba(0,0,0,.35);--radius:18px;--maxw:960px
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
-      color:var(--text);
-      background: radial-gradient(1200px 800px at 10% -10%, #1b2330 0%, transparent 60%),
-                  radial-gradient(1000px 700px at 110% 10%, #0d3b66 0%, transparent 60%),
-                  linear-gradient(180deg,#0b0d10 0%, #0b0d10 100%);
-      line-height:1.55;
-    }
+    body{margin:0;background:radial-gradient(1200px 800px at 10% -10%, #1b2330 0%, transparent 60%),radial-gradient(1000px 700px at 110% 10%, #0d3b66 0%, transparent 60%),linear-gradient(180deg,#0b0d10 0%, #0b0d10 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
     a{color:inherit;text-decoration:none}
     .container{max-width:var(--maxw);margin-inline:auto;padding:0 20px}
-    header{
-      position:sticky;top:0;z-index:50;
-      backdrop-filter:saturate(1.2) blur(10px);
-      background:linear-gradient(0deg,transparent,rgba(11,13,16,.55));
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
-    .brand{display:flex;align-items:center;gap:12px;font-weight:700}
-    .logo{
-      width:34px;height:34px;border-radius:10px;
-      background:linear-gradient(135deg,#2b3340, #11161d);
-      border:1px solid rgba(255,255,255,.08);
-      display:grid;place-items:center;
-      box-shadow:var(--shadow);
-    }
-    .logo span{font-size:14px;letter-spacing:.5px;color:var(--brand)}
-    nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0}
-    .cta{
-      display:inline-flex;align-items:center;gap:10px;
-      padding:10px 16px;border-radius:999px;font-weight:600;
-      background:linear-gradient(180deg,var(--cta),#0c8ecf);
-      color:#031018;border:0;cursor:pointer;
-      box-shadow:0 6px 18px rgba(14,165,233,.35);
-      transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
-    }
-    .cta:hover{transform:translateY(-1px);filter:saturate(1.1);box-shadow:0 10px 28px rgba(14,165,233,.45)}
-    .ghost{
-      padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.12);
-      color:var(--text);
-      transition:background .2s ease,border-color .2s ease;
-    }
-    .ghost:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.22)}
-
-    /* HERO */
-    .hero{padding:76px 0 56px}
-    .headline{font-size:clamp(28px, 5vw, 56px);line-height:1.08;margin:4px 0 12px;font-weight:700}
-    .sub{font-size:clamp(14px, 2.2vw, 18px);color:var(--muted);max-width:760px}
-    .badge{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);font-weight:600;color:#cde7ff}
-    .badge svg{width:16px;height:16px}
-    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
-    .hero-media{margin-top:34px;display:grid;place-items:center}
-    .card-preview{
-      --w: 1020px; --h: 420px; width:min(100%, var(--w)); aspect-ratio: 17/7;
-      border-radius:22px; position:relative; overflow:hidden; box-shadow:var(--shadow);
-      background: radial-gradient(900px 400px at 0% 0%, rgba(147,197,253,.15), transparent 60%),
-                  radial-gradient(900px 400px at 100% 100%, rgba(34,197,94,.12), transparent 50%),
-                  linear-gradient(135deg,#0f141a,#0b0e12 60%,#0e141b);
-      border:1px solid rgba(255,255,255,.08);
-    }
-    .card-gloss{position:absolute;inset:0;background:linear-gradient(130deg, rgba(255,255,255,.08), rgba(255,255,255,0) 35%, rgba(255,255,255,.06) 70%, rgba(255,255,255,0) 100%);mix-blend:overlay}
-    .chip{position:absolute;right:24px;top:24px;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-weight:600;color:#cfe7ff}
-    .logo-on-card{position:absolute;left:26px;bottom:24px;font-size:clamp(18px,3vw,28px);font-weight:700;letter-spacing:.5px}
-    .tagline-on-card{position:absolute;left:26px;bottom:24px;transform:translateY(-38px);color:#c7d2de;font-size:clamp(10px,1.6vw,14px)}
-
-    /* PANELS */
-    .section{padding:64px 0;border-top:1px solid rgba(255,255,255,.06)}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:20px}
-    .panel{grid-column:span 12;background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
-    .panel h3{margin:0 0 8px}
+    header{position:sticky;top:0;z-index:50;backdrop-filter:saturate(1.2) blur(10px);background:linear-gradient(0deg,transparent,rgba(11,13,16,.55));border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .logo{width:32px;height:32px;border-radius:10px;border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;background:linear-gradient(135deg,#2b3340,#11161d)}
+    main{padding:48px 0}
+    h1{font-size:clamp(26px,4.4vw,42px);margin:0 0 8px}
     .muted{color:var(--muted)}
-
-    /* FEATURES */
-    .features{grid-template-columns:repeat(12,1fr)}
-    .feature{grid-column:span 12;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:20px}
-    .feature .icon{width:32px;height:32px;margin-bottom:10px}
-    @media(min-width:720px){
-      .feature{grid-column:span 4}
-    }
-
-    /* PRODUCT CARDS */
-    .cards{grid-template-columns:repeat(12,1fr)}
-    .product{grid-column:span 12;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:20px;display:flex;gap:18px;align-items:center}
-    .product .mock{flex:0 0 120px;height:80px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(135deg,#131922,#0e131a);position:relative;overflow:hidden}
-    .product .mock::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%, rgba(255,255,255,.04) 70%)}
-    .product h4{margin:0 0 6px}
-    .product p{margin:0;color:var(--muted)}
-    @media(min-width:860px){
-      .product{grid-column:span 4;flex-direction:column;align-items:flex-start}
-      .product .mock{width:100%;height:100px}
-    }
-
-    /* PRICING */
-    .pricing{display:grid;gap:18px}
-    @media(min-width:780px){.pricing{grid-template-columns:1fr 1fr}}
-    .price-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:22px}
-    .price{font-size:32px;font-weight:700}
-    .bullet{display:flex;align-items:flex-start;gap:10px;margin:8px 0;color:var(--muted)}
-    .bullet svg{flex:0 0 18px;margin-top:2px}
-
-    /* FOOTER */
-    footer{border-top:1px solid rgba(255,255,255,.08);padding:36px 0;color:#c2cbd6}
-    .foot-grid{display:grid;gap:18px}
-    @media(min-width:760px){.foot-grid{grid-template-columns:2fr 1fr 1fr}}
-    .copyright{color:#8fa1b5;font-size:14px;margin-top:14px}
-
-    /* tiny mobile nav */
-    .menu-btn{display:none}
-    @media(max-width:760px){
-      nav ul{display:none}
-      .menu-btn{display:inline-flex}
-    }
+    .panel{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+    .grid{display:grid;gap:18px}
+    @media(min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
+    label{display:block;font-weight:600;margin:12px 0 6px}
+    input,select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:#0c1117;color:var(--text)}
+    input[type="file"]{padding:10px;background:#0c1117;border:1px dashed rgba(255,255,255,.22)}
+    .row{display:grid;gap:12px}
+    @media(min-width:720px){.row{grid-template-columns:1fr 1fr}}
+    .options{display:grid;gap:12px;margin:10px 0}
+    .inline{display:flex;gap:10px;align-items:center}
+    .price-box{position:sticky;top:90px}
+    .total{font-size:32px;font-weight:800}
+    .cta{display:inline-flex;justify-content:center;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;font-weight:700;background:linear-gradient(180deg,var(--cta),#0c8ecf);color:#031018;border:0;cursor:pointer;box-shadow:0 6px 18px rgba(14,165,233,.35)}
+    .ghost{padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.12)}
+    .help{font-size:12px;color:#93a6bb}
+    .note{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:10px;border-radius:12px;color:#cfe7ff}
+    .small{font-size:12px}
   </style>
 </head>
 <body>
   <header>
     <div class="container nav">
       <div class="brand">
-        <div class="logo"><span>RG</span></div>
-        <a href="#" aria-label="RG.card"><span style="font-weight:800;letter-spacing:.4px">RG.card</span></a>
+        <div class="logo"><span style="font-size:12px">RG</span></div>
+        <a href="index.html">RG.card</a>
       </div>
-      <nav aria-label="Navigation principale">
-        <button class="ghost menu-btn" aria-label="Ouvrir le menu">Menu</button>
-        <ul>
-          <li><a class="ghost" href="#features">Fonctionnalités</a></li>
-          <li><a class="ghost" href="#produits">Produits</a></li>
-          <li><a class="ghost" href="#tarifs">Tarifs</a></li>
-          <li><a class="ghost" href="#contact">Contact</a></li>
-        </ul>
+      <nav>
+        <a class="ghost" href="index.html#produits">Produits</a>
+        <a class="ghost" href="index.html#tarifs">Tarifs</a>
+        <a class="ghost" href="index.html#contact">Contact</a>
       </nav>
-      <a class="cta" href="#contact">Commander</a>
     </div>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="container">
-        <span class="badge" title="Technologie NFC">
-          <!-- small nfc icon -->
-          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 8a6 6 0 0 1 0 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M9 10a3 3 0 0 1 0 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><rect x="11" y="6" width="7" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/></svg>
-          NFC instantané
-        </span>
-        <h1 class="headline">La carte de visite NFC, élégante et durable.</h1>
-        <p class="sub">Partagez vos coordonnées en un geste. <strong>PAS D'APPLI. PAS DE STRESS. IL SUFFIT DE PASSER.</strong> Idéale pour les pros, résistante à l'eau, au froid et à la chaleur, sans batterie et à très faible consommation.</p>
-        <div class="hero-actions">
-          <a class="cta" href="#tarifs">Voir les tarifs</a>
-          <a class="ghost" href="#produits">Découvrir les formats</a>
-        </div>
-        <div class="hero-media">
-          <div class="card-preview" role="img" aria-label="Aperçu carte RG.card">
-            <div class="card-gloss"></div>
-            <div class="chip">NFC</div>
-            <div class="logo-on-card">RG.card</div>
-            <div class="tagline-on-card">Carte de visite connectée</div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div class="container">
+      <div style="margin-bottom:14px" class="small muted">Accueil ▸ Commander</div>
+      <h1>Commander vos cartes NFC</h1>
+      <p class="muted">Prix unitaire : <strong>20 €</strong> (hors TVA — micro‑entreprise, TVA non applicable, art. 293 B du CGI). Montant calculé en bas à droite.</p>
 
-    <section id="features" class="section">
-      <div class="container">
-        <div class="grid features">
-          <div class="feature">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-            </div>
-            <h3>Pas d'application</h3>
-            <p class="muted">Vos prospects scannent, vous êtes enregistré. Compatible iOS & Android récents.</p>
-          </div>
-          <div class="feature">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="14" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M7 15h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-            </div>
-            <h3>Polyvalent</h3>
-            <p class="muted">Lien vers site, réseaux, Google, menu, formulaire, vCard… Utilisations quasi infinies.</p>
-          </div>
-          <div class="feature">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v6m0 8v6M2 12h6m8 0h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-            </div>
-            <h3>Clé en main</h3>
-            <p class="muted">Nous configurons, personnalisons et livrons. Vous n'avez qu'à passer la carte.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="produits" class="section">
-      <div class="container">
-        <h2 style="margin:0 0 16px">Formats disponibles</h2>
-        <p class="muted" style="margin:0 0 20px">Cartes, stickers, plaques et formats sur-mesure pour s'adapter à chaque métier.</p>
-        <div class="grid cards">
-          <article class="product">
-            <div class="mock" aria-hidden="true"></div>
+      <div class="grid">
+        <!-- FORMULAIRE -->
+        <form class="panel" id="orderForm" onsubmit="handleSubmit(event)">
+          <h2 style="margin-top:0">Personnalisation</h2>
+          <div class="row">
             <div>
-              <h4>Carte PVC premium</h4>
-              <p>Finition mate ou brillante, impression pro. Idéale pour le networking.</p>
+              <label for="finish">Finition de la carte</label>
+              <select id="finish" name="finish" required>
+                <option value="mate">Mate</option>
+                <option value="brillante">Brillante</option>
+              </select>
             </div>
-          </article>
-          <article class="product">
-            <div class="mock" aria-hidden="true"></div>
             <div>
-              <h4>Stickers NFC</h4>
-              <p>À poser sur vitrine, comptoir, caisse. Redirige vers avis Google, réseaux, etc.</p>
+              <label for="color">Couleur dominante</label>
+              <select id="color" name="color" required>
+                <option>Noir</option>
+                <option>Anthracite</option>
+                <option>Blanc</option>
+                <option>Personnalisée</option>
+              </select>
             </div>
-          </article>
-          <article class="product">
-            <div class="mock" aria-hidden="true"></div>
+          </div>
+
+          <div class="row">
             <div>
-              <h4>Plaques & formats custom</h4>
-              <p>Résistants eau/froid/chaleur. Parfait pour restaurants, salons, cabinets.</p>
+              <label for="quantity">Quantité</label>
+              <input id="quantity" name="quantity" type="number" min="1" value="1" required>
+              <div class="help">Prix de base : 20 € / carte.</div>
             </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="tarifs" class="section">
-      <div class="container">
-        <h2 style="margin:0 0 16px">Tarifs simples</h2>
-        <p class="muted" style="margin:0 0 22px">Prix transparents, service identique aux concurrents, mais moins cher.</p>
-        <div class="pricing">
-          <div class="price-card">
-            <h3>Carte NFC à l'unité</h3>
-            <p class="price">20 € TTC</p>
-            <div class="bullet">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Personnalisation design incluse
-            </div>
-            <div class="bullet">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Programmation du lien (site, réseaux, vCard…)
-            </div>
-            <div class="bullet">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Carte résistante & durable
-            </div>
-            <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-              <a class="cta" href="#contact">Commander</a>
-              <a class="ghost" href="#contact">Demander un devis</a>
+            <div>
+              <label for="link">Lien à programmer (site, Instagram, Google, vCard…)</label>
+              <input id="link" name="link" type="url" placeholder="https://…" required>
             </div>
           </div>
-          <div class="price-card">
-            <h3>Offre B2B / Agences</h3>
-            <p class="muted">Fourniture en marque blanche pour web designers, agences, prestataires.</p>
-            <div class="bullet">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Intégration clé en main pour vos clients
+
+          <div class="options">
+            <div class="inline">
+              <input id="engrave" name="engrave" type="checkbox" onchange="updateTotal()">
+              <label for="engrave" style="margin:0">Ajouter une gravure laser (logo/texte)</label>
             </div>
-            <div class="bullet">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Tarifs avantageux selon volumes
+            <div>
+              <label for="logo">Votre logo (SVG/PNG/PDF)</label>
+              <input id="logo" name="logo" type="file" accept=".svg,.png,.pdf,.ai,.eps">
+              <div class="help">Vectoriel recommandé (SVG/PDF) pour une gravure nette.</div>
             </div>
-            <div class="bullet">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Visuels pro & échantillons possibles
-            </div>
-            <div style="margin-top:14px">
-              <a class="ghost" href="#contact">Parler d'un partenariat</a>
+            <div>
+              <label for="notes">Notes pour la mise en page</label>
+              <textarea id="notes" name="notes" rows="4" placeholder="Instructions de design, police souhaitée, placement du logo…"></textarea>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <section class="section">
-      <div class="container grid">
-        <div class="panel" style="display:grid;gap:10px">
-          <h3>Comment ça marche ?</h3>
-          <ol style="margin:0 0 10px 18px;color:var(--muted);display:grid;gap:6px">
-            <li>Vous choisissez le format (carte, sticker, plaque) et le lien cible (site, réseaux, vCard, Google…)</li>
-            <li>Nous créons le visuel et programmons la puce NFC</li>
-            <li>Vous recevez votre produit prêt à l'emploi. Il suffit d'approcher un smartphone (≤4 cm)</li>
-          </ol>
-          <small class="muted">Technologie NFC basée sur RFID, éprouvée en aviation et industrie. Ultra basse conso (~0,1 Wh par scan).</small>
-        </div>
-      </div>
-    </section>
-
-    <section id="contact" class="section">
-      <div class="container">
-        <div class="grid">
-          <div class="panel">
-            <h3>Contact & commande</h3>
-            <p class="muted">Un besoin, une question, un devis ? Contact direct conseillé.</p>
-            <div style="display:grid;gap:10px;margin-top:6px">
-              <a class="ghost" href="tel:+33764021268">📞 07 64 02 12 68</a>
-              <a class="ghost" href="mailto:rg.businesscard@gmail.com">✉️ rg.businesscard@gmail.com</a>
-              <a class="ghost" href="https://www.instagram.com/rg.card?igsh=MTRocjZ6aTFvYmQ0bQ%3D%3D&utm_source=qr" target="_blank" rel="noopener">📷 Instagram @rg.card</a>
+          <h2>Vos coordonnées</h2>
+          <div class="row">
+            <div>
+              <label for="name">Nom complet</label>
+              <input id="name" name="name" required>
             </div>
-            <div style="margin-top:16px">
-              <a class="cta" href="#">Demander un échantillon</a>
+            <div>
+              <label for="email">E‑mail</label>
+              <input id="email" name="email" type="email" required>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-  </main>
+          <div class="row">
+            <div>
+              <label for="phone">Téléphone</label>
+              <input id="phone" name="phone" type="tel" required>
+            </div>
+            <div>
+              <label for="company">Entreprise (facultatif)</label>
+              <input id="company" name="company">
+            </div>
+          </div>
 
-  <footer>
-    <div class="container foot-grid">
-      <div>
-        <div class="brand" style="margin-bottom:8px">
-          <div class="logo"><span>RG</span></div>
-          <strong>RG.card</strong>
-        </div>
-        <p class="muted" style="margin:0">"Pas d'appli. Pas de stress. Il suffit de passer."</p>
-        <p class="copyright">© <span id="y"></span> RG.card — Tous droits réservés</p>
-      </div>
-      <div>
-        <strong>Liens</strong>
-        <div style="display:grid;gap:8px;margin-top:8px">
-          <a class="ghost" href="#features">Fonctionnalités</a>
-          <a class="ghost" href="#produits">Produits</a>
-          <a class="ghost" href="#tarifs">Tarifs</a>
-        </div>
-      </div>
-      <div>
-        <strong>Légal</strong>
-        <div style="display:grid;gap:8px;margin-top:8px">
-          <span class="muted">Entreprise officielle — Tours, France</span>
-          <span class="muted">Mentions légales sur demande</span>
-        </div>
+          <div class="note small">
+            Paiement en ligne : Apple Pay / Carte via Stripe possible. <strong>Intégration technique requise</strong> (voir zone Paiement). En attendant, vous pouvez envoyer la commande par e‑mail.
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+            <button class="cta" type="submit">Envoyer la commande</button>
+            <a id="mailtoLink" class="ghost" href="#">Envoyer par e‑mail</a>
+          </div>
+        </form>
+
+        <!-- RECAP / PAIEMENT -->
+        <aside class="panel price-box">
+          <h2 style="margin-top:0">Récapitulatif</h2>
+          <div class="small muted">Prix unitaire de base</div>
+          <div style="font-weight:700;margin:4px 0 10px">20 € / carte</div>
+          <div class="small muted">Gravure laser</div>
+          <div class="small" id="engraveLine">À confirmer (optionnelle)</div>
+
+          <hr style="border:0;border-top:1px solid rgba(255,255,255,.12);margin:14px 0">
+          <div class="total" id="total">20 €</div>
+          <div class="small muted">TVA non applicable — art. 293 B du CGI</div>
+
+          <div style="margin-top:18px">
+            <h3 style="margin:0 0 6px">Paiement</h3>
+            <div class="note small" style="margin-bottom:10px">
+              Bouton Apple Pay / CB via Stripe Payment Element (à intégrer côté serveur). 
+              <div class="help">Je peux fournir le code Stripe quand vous serez prêt.</div>
+            </div>
+            <button class="cta" type="button" disabled title="Stripe à intégrer"> Pay / Carte bancaire</button>
+          </div>
+
+          <div style="margin-top:14px">
+            <a class="ghost" href="index.html">← Retour au site</a>
+          </div>
+        </aside>
       </div>
     </div>
-  </footer>
+  </main>
 
   <script>
-    // année
-    document.getElementById('y').textContent = new Date().getFullYear();
-    // menu tiny
-    const btn = document.querySelector('.menu-btn');
-    const list = document.querySelector('nav ul');
-    btn?.addEventListener('click', ()=>{
-      const open = getComputedStyle(list).display !== 'none';
-      list.style.display = open ? 'none' : 'flex';
-      list.style.flexDirection = 'column';
-      list.style.gap = '10px';
-    });
+    const BASE_PRICE = 20;               // € par carte
+    const ENGRAVE_PRICE = 0;             // € par carte (définissez le montant; 0 = à confirmer)
+
+    const qtyEl = document.getElementById('quantity');
+    const engraveEl = document.getElementById('engrave');
+    const totalEl = document.getElementById('total');
+    const engraveLine = document.getElementById('engraveLine');
+    const mailtoLink = document.getElementById('mailtoLink');
+    const form = document.getElementById('orderForm');
+
+    function formatEUR(n){
+      return new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR', maximumFractionDigits:0 }).format(n)
+        .replace(/,00\s€/, ' €');
+    }
+
+    function updateTotal(){
+      const qty = Math.max(1, parseInt(qtyEl.value || '1', 10));
+      const engrave = engraveEl.checked;
+      const unit = BASE_PRICE + (engrave ? ENGRAVE_PRICE : 0);
+      const total = unit * qty;
+      totalEl.textContent = formatEUR(total);
+      engraveLine.textContent = engrave ? (ENGRAVE_PRICE>0? ('+'+formatEUR(ENGRAVE_PRICE)+' / carte') : 'Option sélectionnée — prix confirmé au devis') : 'Non sélectionnée';
+      buildMailto();
+    }
+
+    function buildMailto(){
+      const data = new FormData(form);
+      const lines = [
+        'Nouvelle commande RG.card',
+        '',
+        `Finition: ${data.get('finish')}`,
+        `Couleur: ${data.get('color')}`,
+        `Quantité: ${data.get('quantity')}`,
+        `Lien NFC: ${data.get('link')}`,
+        `Gravure: ${data.get('engrave') ? 'Oui' : 'Non'}`,
+        `Notes: ${data.get('notes')||'-'}`,
+        '',
+        `Nom: ${data.get('name')}`,
+        `Email: ${data.get('email')}`,
+        `Téléphone: ${data.get('phone')}`,
+        `Entreprise: ${data.get('company')||'-'}`,
+        '',
+        `Total estimé: ${totalEl.textContent} (TVA non applicable — art. 293 B du CGI)`
+      ];
+      const subject = encodeURIComponent('Commande RG.card');
+      const body = encodeURIComponent(lines.join('\n'));
+      mailtoLink.href = `mailto:rg.businesscard@gmail.com?subject=${subject}&body=${body}`;
+    }
+
+    function handleSubmit(e){
+      e.preventDefault();
+      updateTotal();
+      alert('Merci ! Votre commande est prête à être envoyée. Cliquez sur « Envoyer par e‑mail » pour finaliser, ou activez le paiement Stripe quand vous serez prêt.');
+    }
+
+    qtyEl.addEventListener('input', updateTotal);
+    engraveEl.addEventListener('change', updateTotal);
+    document.addEventListener('DOMContentLoaded', updateTotal);
   </script>
 </body>
 </html>
