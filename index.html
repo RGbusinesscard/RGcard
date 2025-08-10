@@ -111,14 +111,10 @@
       filter: blur(22px); opacity:.7;
     }
     .plaque img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  display:block;
-  border-radius:22px;
-  background-color:transparent; /* fond transparent */
-  mix-blend-mode:multiply;      /* enlève le blanc */
-}
+      width:100%; height:100%; object-fit:contain; display:block; border-radius:22px;
+      background-color:transparent;          /* important */
+      mix-blend-mode:multiply;               /* masque le blanc */
+    }
     @media(max-width:600px){ .plaque{width:min(92vw, 520px)} }
 
     .plaque:hover{filter: drop-shadow(0 34px 54px rgba(0,0,0,.65))}
@@ -177,9 +173,9 @@
           </div>
 
           <div class="plaque-wrap">
-            <!-- Remplace le chemin si besoin -->
+            <!-- Chemin corrigé vers assets -->
             <figure class="plaque" id="plaque">
-             <img src="assets/plaque-1.png" alt="Plaque RG.card">
+              <img src="assets/plaque-1.png" alt="Plaque RG.card">
             </figure>
           </div>
         </div>
@@ -284,7 +280,7 @@
     const btn = document.querySelector('.menu-btn'); const list = document.querySelector('nav ul');
     btn?.addEventListener('click', ()=>{ const open = getComputedStyle(list).display !== 'none'; list.style.display = open ? 'none' : 'flex'; list.style.flexDirection='column'; list.style.gap='10px'; });
 
-    // ===== Effet Apple pour la plaque : parallax (scroll) + tilt (souris) =====
+    // Effets plaque (scroll + tilt) — inchangé
     (() => {
       const stage = document.querySelector('.plaque-stage');
       const sticky = document.querySelector('.plaque-sticky');
@@ -295,7 +291,7 @@
 
       function measure(){
         w = window.innerWidth;
-        maxX = Math.min(140, w * 0.18); // amplitude du déplacement horizontal
+        maxX = Math.min(140, w * 0.18);
       }
 
       function clamp(v,min,max){ return Math.min(max, Math.max(min,v)); }
@@ -303,9 +299,8 @@
       function onScroll(){
         const rect = stage.getBoundingClientRect();
         const full = stage.offsetHeight - window.innerHeight;
-        const progress = clamp((0 - rect.top) / (full || 1), 0, 1); // 0..1
-        const x = (progress - 0.5) * 2 * maxX; // -maxX .. +maxX
-        // on combine translation X + inclination de base
+        const progress = clamp((0 - rect.top) / (full || 1), 0, 1);
+        const x = (progress - 0.5) * 2 * maxX;
         plaque.style.transform = `translate3d(${x}px, 0, 0) rotate(-6deg)`;
       }
 
@@ -313,8 +308,8 @@
         const r = sticky.getBoundingClientRect();
         const cx = r.left + r.width/2;
         const cy = r.top + r.height/2;
-        const dx = (e.clientX - cx) / r.width;   // -0.5..0.5
-        const dy = (e.clientY - cy) / r.height;  // -0.5..0.5
+        const dx = (e.clientX - cx) / r.width;
+        const dy = (e.clientY - cy) / r.height;
         const tiltX = clamp(dy * -6, -4, 4);
         const tiltY = clamp(dx * 10, -8, 8);
         plaque.style.transform += ` rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
