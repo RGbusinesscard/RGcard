@@ -136,6 +136,69 @@
       nav ul{display:none}
       .menu-btn{display:inline-flex}
     }
+
+    /* === Sticky / Parallax plaques style Apple (dynamique & mobile) === */
+    #plaques-sticky { padding: 0; }
+    #plaques-sticky .sticky-wrap{
+      position: relative;
+      height: 220vh; /* durée de l'effet au scroll */
+      /* fond dynamique (halo) */
+      background:
+        radial-gradient(900px 400px at 20% 20%, rgba(147,197,253,.10), transparent 60%),
+        radial-gradient(800px 320px at 80% 60%, rgba(56,189,248,.10), transparent 60%),
+        radial-gradient(900px 380px at 50% 110%, rgba(34,197,94,.10), transparent 70%);
+    }
+    #plaques-sticky .sticky-inner{
+      position: sticky; top: 0; z-index: 1;
+      padding: 64px 0; /* rythme des sections */
+    }
+    .showcase-title{ margin: 0 0 6px; font-size: clamp(22px,3.6vw,36px); }
+    .showcase-sub{ margin: 0 0 18px; }
+
+    .plaque-rail{
+      display: flex; gap: 28px; align-items: center;
+      will-change: transform;
+      overflow: visible;
+      mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+
+    .plaque{
+      flex: 0 0 auto;
+      width: min(48vw, 460px);     /* rectangle adapté aux téléphones */
+      aspect-ratio: 5 / 4;         /* rectangle doux */
+      display: grid; place-items: center;
+      filter: drop-shadow(0 18px 28px rgba(0,0,0,.45));
+      transition: transform .4s ease, filter .4s ease;
+      position: relative;
+    }
+    /* lueur douce derrière chaque plaque */
+    .plaque::before{
+      content:""; position:absolute; inset:0; z-index:-1; border-radius:22px;
+      background: radial-gradient(120px 80px at 60% 20%, rgba(147,197,253,.20), transparent 60%),
+                  radial-gradient(140px 100px at 30% 80%, rgba(56,189,248,.16), transparent 60%);
+      filter: blur(18px);
+      opacity:.6;
+    }
+    .plaque img{
+      width: 100%; height: 100%; object-fit: contain;
+      border-radius: 18px;
+      /* si l'image garde un peu de blanc, ça “fond” sur le fond sombre */
+      mix-blend-mode: multiply;
+    }
+
+    .tilt-l{ transform: rotate(-7deg); }
+    .tilt-r{ transform: rotate(6deg); }
+
+    @media (max-width: 720px){
+      .plaque{ width: min(78vw, 420px); aspect-ratio: 5/4; }
+      .tilt-l{ transform: rotate(-5deg); }
+      .tilt-r{ transform: rotate(4deg); }
+      #plaques-sticky .sticky-wrap{ height: 200vh; }
+    }
+
+    @media (hover:hover){
+      .plaque:hover{ filter: drop-shadow(0 26px 40px rgba(0,0,0,.55)); }
+    }
   </style>
 </head>
 <body>
@@ -154,7 +217,7 @@
           <li><a class="ghost" href="#contact">Contact</a></li>
         </ul>
       </nav>
-     <a class="cta" href="order.html">Commander</a>
+      <a class="cta" href="order.html">Commander</a>
     </div>
   </header>
 
@@ -178,6 +241,28 @@
             <div class="chip">NFC</div>
             <div class="logo-on-card">RG.card</div>
             <div class="tagline-on-card">Carte de visite connectée</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Showcase plaques — sticky/parallax façon Apple -->
+    <section id="plaques-sticky" class="section">
+      <div class="sticky-wrap">
+        <div class="sticky-inner">
+          <div class="container">
+            <h2 class="showcase-title">Exemple de plaque</h2>
+            <p class="showcase-sub muted">Faites défiler pour voir le mouvement</p>
+          </div>
+
+          <div class="plaque-rail" aria-label="Défilement de plaques NFC">
+            <!-- Duplique la même image pour l'effet de défilement -->
+            <figure class="plaque tilt-l"><img src="actifs/plaque-1.png" alt="Plaque RG.card"></figure>
+            <figure class="plaque tilt-r"><img src="actifs/plaque-1.png" alt="Plaque RG.card"></figure>
+            <figure class="plaque tilt-l"><img src="actifs/plaque-1.png" alt="Plaque RG.card"></figure>
+            <figure class="plaque tilt-r"><img src="actifs/plaque-1.png" alt="Plaque RG.card"></figure>
+            <figure class="plaque tilt-l"><img src="actifs/plaque-1.png" alt="Plaque RG.card"></figure>
+            <figure class="plaque tilt-r"><img src="actifs/plaque-1.png" alt="Plaque RG.card"></figure>
           </div>
         </div>
       </div>
@@ -248,7 +333,7 @@
         <div class="pricing">
           <div class="price-card">
             <h3>Carte NFC à l'unité</h3>
-            <p class="price">20 € TTC</p>
+            <p class="price">20 €</p>
             <div class="bullet">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Personnalisation design incluse
@@ -262,7 +347,7 @@
               Carte résistante & durable
             </div>
             <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-              <a class="cta"<a class="cta" href="order.html">Commander</a>>Commander</a>
+              <a class="cta" href="order.html">Commander</a>
               <a class="ghost" href="#contact">Demander un devis</a>
             </div>
           </div>
@@ -286,6 +371,7 @@
             </div>
           </div>
         </div>
+        <p class="muted" style="margin:10px 0 0">TVA non applicable — art. 293 B du CGI</p>
       </div>
     </section>
 
@@ -315,7 +401,7 @@
               <a class="ghost" href="https://www.instagram.com/rg.card?igsh=MTRocjZ6aTFvYmQ0bQ%3D%3D&utm_source=qr" target="_blank" rel="noopener">📷 Instagram @rg.card</a>
             </div>
             <div style="margin-top:16px">
-              <a class="cta" href="#">Demander un échantillon</a>
+              <a class="cta" href="order.html">Commander</a>
             </div>
           </div>
         </div>
@@ -363,6 +449,58 @@
       list.style.flexDirection = 'column';
       list.style.gap = '10px';
     });
+
+    // === Sticky/parallax JS (façon Apple) ===
+    (() => {
+      const section = document.getElementById('plaques-sticky');
+      if (!section) return;
+      const rail = section.querySelector('.plaque-rail');
+
+      let ticking = false, railWidth = 0, viewportW = 0, maxShift = 0;
+
+      function measure(){
+        railWidth = Array.from(rail.children).reduce((w, el) => {
+          const rect = el.getBoundingClientRect();
+          return w + rect.width + 28; // 28 = gap
+        }, 0);
+        viewportW = window.innerWidth;
+        maxShift = Math.max(0, railWidth - viewportW * 0.92);
+      }
+
+      function clamp(v, min, max){ return Math.min(max, Math.max(min, v)); }
+
+      function onScroll(){
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const rect = section.getBoundingClientRect();
+          const full = section.offsetHeight - window.innerHeight;
+          const progressed = clamp((0 - rect.top) / (full || 1), 0, 1); // 0..1
+          const x = -progressed * maxShift;
+          rail.style.transform = `translate3d(${x}px,0,0)`;
+
+          // micro-parallax : on réduit l’inclinaison vers la fin
+          section.querySelectorAll('.tilt-l, .tilt-r').forEach((el) => {
+            const base = el.classList.contains('tilt-l') ? -7 : 6;
+            const eased = base * (1 - progressed * 0.6);
+            el.style.transform = `rotate(${eased}deg)`;
+          });
+
+          ticking = false;
+        });
+      }
+
+      function start(){
+        measure(); onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', () => { measure(); onScroll(); }, { passive: true });
+      }
+
+      const io = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) start();
+      }, { threshold: 0 });
+      io.observe(section);
+    })();
   </script>
 </body>
 </html>
