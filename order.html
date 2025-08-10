@@ -1,59 +1,123 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Commander — RG.card</title>
-<style>
-body { font-family: sans-serif; background: #0b0d10; color: white; padding: 20px; }
-.container { max-width: 600px; margin: auto; }
-label { display: block; margin-top: 15px; }
-select, input[type="file"] { width: 100%; padding: 8px; margin-top: 5px; }
-.total { font-size: 1.5em; margin-top: 20px; }
-button { margin-top: 20px; padding: 12px 20px; background: #0ea5e9; border: none; color: white; cursor: pointer; border-radius: 8px; }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Commander — RG.card</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0d10;
+      --panel:#0f1318cc;
+      --text:#e8edf2;
+      --muted:#a7b1bd;
+      --cta:#0ea5e9;
+      --radius:18px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --maxw: 900px;
+    }
+    body{
+      margin:0;
+      font-family:Inter,system-ui,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:auto;padding:20px}
+    h1{font-size:clamp(24px,5vw,36px);margin-bottom:10px}
+    .panel{
+      background:var(--panel);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+      margin-bottom:20px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    label{display:block;margin:12px 0 6px;font-weight:600}
+    select, input[type="text"], input[type="email"], input[type="file"]{
+      width:100%;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.1);
+      background:#151a20;
+      color:var(--text);
+    }
+    .total{
+      font-size:1.4rem;
+      font-weight:700;
+      margin-top:10px;
+    }
+    button{
+      background:linear-gradient(180deg,var(--cta),#0c8ecf);
+      border:none;
+      padding:14px 20px;
+      border-radius:999px;
+      color:#031018;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 6px 18px rgba(14,165,233,.35);
+      width:100%;
+      font-size:1rem;
+    }
+    button:hover{filter:brightness(1.1)}
+  </style>
 </head>
 <body>
-<div class="container">
-<h1>Commander</h1>
-<form id="orderForm">
-  <label>Produit :
-    <select id="product">
-      <option value="20">Carte NFC — 20 €</option>
-      <option value="35">Plaque NFC — 35 €</option>
-    </select>
-  </label>
+  <div class="container">
+    <h1>Commander votre produit NFC</h1>
+    <p class="muted">Complétez les étapes ci-dessous pour passer commande.</p>
 
-  <label>Option gravure laser (+10 €)
-    <input type="file" id="logoFile" accept="image/*">
-  </label>
+    <div class="panel">
+      <label for="produit">Choisissez votre produit</label>
+      <select id="produit">
+        <option value="20">Carte NFC — 20 €</option>
+        <option value="35">Plaque NFC — 35 €</option>
+      </select>
 
-  <div class="total">Total : <span id="totalPrice">20</span> €</div>
+      <label for="gravure">Personnalisation gravure/logo (+10 €)</label>
+      <input type="file" id="gravure">
 
-  <button type="button" id="payBtn">Payer avec SumUp</button>
-</form>
-</div>
+      <div class="total">Total : <span id="total">20</span> €</div>
+    </div>
 
-<script>
-const product = document.getElementById('product');
-const logoFile = document.getElementById('logoFile');
-const totalPrice = document.getElementById('totalPrice');
+    <div class="panel">
+      <label for="nom">Nom complet</label>
+      <input type="text" id="nom" placeholder="Votre nom" required>
 
-function updateTotal() {
-  let price = parseInt(product.value);
-  if (logoFile.files.length > 0) {
-    price += 10;
-  }
-  totalPrice.textContent = price;
-}
+      <label for="email">E-mail</label>
+      <input type="email" id="email" placeholder="votremail@example.com" required>
 
-product.addEventListener('change', updateTotal);
-logoFile.addEventListener('change', updateTotal);
+      <label for="adresse">Adresse</label>
+      <input type="text" id="adresse" placeholder="Adresse de livraison" required>
+    </div>
 
-// Paiement SumUp — à remplacer par ton vrai lien ou intégration
-document.getElementById('payBtn').addEventListener('click', () => {
-  alert('Ici tu pourras intégrer ton lien SumUp ou Apple Pay');
-});
-</script>
+    <div class="panel">
+      <button id="payer">Payer maintenant</button>
+    </div>
+  </div>
+
+  <script>
+    const produit = document.getElementById('produit');
+    const gravure = document.getElementById('gravure');
+    const totalEl = document.getElementById('total');
+
+    function updateTotal(){
+      let prix = parseInt(produit.value);
+      if(gravure.files.length > 0){ prix += 10; }
+      totalEl.textContent = prix;
+    }
+
+    produit.addEventListener('change', updateTotal);
+    gravure.addEventListener('change', updateTotal);
+
+    document.getElementById('payer').addEventListener('click', ()=>{
+      alert("Ici on branchera SumUp / Apple Pay pour le paiement.");
+    });
+
+    updateTotal();
+  </script>
 </body>
 </html>
